@@ -34,10 +34,15 @@ Ask for **order webhooks in the same conversation** — `orders/create`,
 >
 > Current state:
 >
-> - **Agent profile:** [your hosted profile URL] — declares
+> - **Agent profile:** https://cdn.jsdelivr.net/gh/colemooney-blue/ucp-agent@main/ucp-profile.json — declares
 >   `dev.ucp.shopping.cart`, `.checkout`, `.catalog.search`, `.catalog.lookup`,
 >   `.fulfillment`, `.buyer_consent` at version 2026-08-25.
-> - **Auth:** Token tier via Dev Dashboard client credentials.
+> - **Auth:** Token tier via Dev Dashboard client credentials. Catalog search
+>   verified working end to end under this profile.
+> - **Merchant side:** we are already a UCP-enabled Shopify merchant
+>   (blueprint.bryanjohnson.com, UCP 2026-08-25, advertising cart, checkout,
+>   order, fulfillment, discount and catalog capabilities). We are asking as a
+>   merchant who has implemented the buy side, not as an unknown third party.
 > - **Payments:** Shop Pay `dev.shopify.shop_pay`, Path B identity-linked
 >   tokens. Buyer authorizes their Shop Wallet to our platform; all token
 >   exchange server-side over TLS 1.2+, no public-client involvement.
@@ -51,6 +56,8 @@ Ask for **order webhooks in the same conversation** — `orders/create`,
 >
 > Use case: [one or two sentences — what the agent does and for whom]
 > Expected volume: [orders/month, and which merchants]
+> Also requesting: a catalog rate-limit increase. Our token currently reports
+> {"catalog":{"max":5,"period":1}}, which is thin for production traffic.
 > Buyer consent and revocation: [how a buyer authorizes autonomous purchases,
 > and how they turn it off]
 >
