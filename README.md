@@ -81,6 +81,30 @@ ucp-profile.json  Your own profile, for when you stop using the fixture
 docs/grant-request.md  Draft ask for the completion grant
 ```
 
+## Hosting your own profile: GitHub Pages does NOT work
+
+Shopify validates the `Cache-Control` header on your profile and rejects
+anything without an explicit cacheability directive:
+
+    profile_malformed - Unable to fetch agent profile: Invalid cache control
+
+GitHub Pages sends `cache-control: max-age=600` with no `public`, and Pages
+gives you no way to set headers. Shopify's own fixtures send
+`public, max-age=3600, stale-while-revalidate=7200`.
+
+**Working host: jsDelivr**, which serves straight from this repo with
+`public, max-age=604800, s-maxage=43200` and needs no account or config:
+
+    https://cdn.jsdelivr.net/gh/<owner>/<repo>@main/ucp-profile.json
+
+Verified accepted by Shopify. Any host where you control response headers
+also works (Cloudflare Pages `_headers`, Netlify `_headers`, Vercel
+`vercel.json`, S3 + CloudFront metadata).
+
+Caveat: jsDelivr caches `@main` for up to 7 days. Editing `ucp-profile.json`
+will not take effect promptly. Pin a commit SHA instead of `@main` when you
+need a change live immediately, and update the URL when you change the file.
+
 ## Going from fixture to your own profile
 
 Default profile is Shopify's hosted fixture, so nothing needs hosting to start:
