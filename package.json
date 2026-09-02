@@ -1,0 +1,12 @@
+{
+  "name": "ucp-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shopify UCP agentic commerce agent - discovery through checkout",
+  "scripts": {
+    "demo": "node --env-file-if-exists=.env src/demo.js",
+    "auth": "node --env-file-if-exists=.env -e \"import('./src/auth.js').then(m => m.getAccessToken())\"",
+    "smoke": "node --env-file-if-exists=.env smoke.js"
+  }
+}
