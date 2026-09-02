@@ -157,6 +157,48 @@ https://shopify.dev/ucp/agent-profiles/2026-08-25/malformed.json
   `{ amount, currency }`; Storefront Catalog returns a bare integer.
   `priceOf()` in `src/search.js` handles both so a swap doesn't print `$NaN`.
 
+## ucp-cli 0.7.0 cannot reach 2026-08-25 merchants
+
+Verified 2026-09-02. The CLI negotiates against a hardcoded agent range of
+`[2026-01-23..2026-04-08]`. Both failure modes:
+
+    PROTOCOL_VERSION_INCOMPATIBLE - no business dev.ucp.shopping entry within
+      agent range [2026-01-23..2026-04-08]; business offered 2026-08-25
+    NO_COMPATIBLE_TRANSPORT - acceptable: [mcp]; business: [embedded]
+
+The second happens with blueprint.bryanjohnson.com, which offers 2026-08-25
+over `mcp` and 2026-04-08 over `embedded` - the CLI drops to 04-08 and cannot
+speak that transport.
+
+`ucp profile init --protocol-min/--protocol-max` does NOT fix it. Those flags
+write `protocol_versions` into `~/.ucp/profiles/<name>/meta.json`, but
+negotiation ignores that file. Overwriting `profile.json` in the same
+directory does not work either - the range is in the binary. 0.7.0 is the
+latest published version, so there is nothing to upgrade to.
+
+Consequence: the `ucp` MCP server (and therefore conversational shopping
+through it) currently fails against catalog.shopify.com and Blueprint. The
+code in this repo is unaffected - it speaks 2026-08-25 directly.
+
+Worth filing at https://github.com/Shopify/ucp-cli/issues.
+
+## Bearer token for the CLI
+
+Checkout through the CLI needs the Dev Dashboard token ("Catalog JWT" in the
+CLI's README). Wired up without storing a secret:
+
+    ~/.ucp/profiles/blueprint-agent/headers.json
+      { "default": { "Authorization": "Bearer ${UCP_TOKEN}" } }
+
+    export UCP_TOKEN=$(npm run -s token)   # fresh 60-minute token
+
+`${ENV_VAR}` interpolation keeps the file secret-free. Re-export hourly.
+
+Note: `AUTH_REQUIRED` and `INSUFFICIENT_PERMISSIONS` deliberately do NOT fire
+the escalation hook - they return structured error CTAs instead. That is how
+you will detect a missing complete_checkout grant, rather than by the
+escalation path.
+
 ## Cross-check with the official CLI
 
 ```bash
