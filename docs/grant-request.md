@@ -31,6 +31,11 @@ Ask for **order webhooks in the same conversation** — `orders/create`,
 > 1. Granting our token permission to call `complete_checkout`.
 > 2. Registering a delivery URL for `orders/create`, `orders/updated`, and
 >    `orders/delete`.
+> 3. Enrolling in Shop Pay Path B (identity-linked payment tokens). The handler
+>    spec describes Path B but not how a platform enrolls; UCP v1 identity
+>    linking is per-business OAuth, and the delegated-IdP path that Path B
+>    appears to use is listed as a future extension. What is the current
+>    enrollment path?
 >
 > Current state:
 >

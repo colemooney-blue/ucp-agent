@@ -14,10 +14,24 @@
  *           "authorized for the platform to use in autonomous checkouts."
  *           Time-limited, identity-scoped to your platform. <- this one.
  *
- * Path B is UCP **Identity Linking**, specified at
- *   https://ucp.dev/2026-04-08/specification/identity-linking/
- * The functions below implement the buyer-linked-token variant of that flow
- * (RFC 8693 -> RFC 7523). Reconcile against the spec before production.
+ * CORRECTION (verified 2026-09-02 against the UCP spec):
+ * The functions below implement an RFC 8693 -> RFC 7523 chain against a
+ * central Shop IdP. That is NOT the v1 identity-linking mechanism. UCP v1
+ * (https://ucp.dev/2026-04-08/specification/identity-linking/) specifies
+ * plain OAuth 2.0 Authorization Code + PKCE(S256) against EACH BUSINESS's own
+ * authorization server, discovered at
+ *   {business-domain}/.well-known/oauth-authorization-server
+ * The delegated-IdP chaining these functions model is named in the spec as a
+ * FUTURE extension (config.providers, e.g. com.shopify) and is explicitly not
+ * in v1. Treat everything below as unverified until Shopify documents the
+ * Shop Pay Path B enrollment path.
+ *
+ * Also verified: blueprint.bryanjohnson.com does NOT advertise
+ * dev.ucp.common.identity_linking, so no scope gates checkout there - guest /
+ * agent-authenticated checkout is permitted. Its OAuth AS
+ * (https://shopify.com/authentication/77231292701) offers Customer Account API
+ * scopes, not UCP scopes, and advertises only client_secret_basic /
+ * client_secret_post - no 'none', so a public client cannot link against it.
  *
  * SHORTCUT WORTH TAKING: Shopify publishes a Shop skill for personal agents
  * that completes identity linking and UCP checkout for you:
